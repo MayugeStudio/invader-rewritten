@@ -107,21 +107,32 @@ class MenuScene(BaseScene):
         text = self.option_texts[self.option_cursor]
         self.option_buttons[self.option_cursor] = self.font.render(text, False, self.button_color.data)
 
-        key = pygame.key.get_just_released()
-        if key[pygame.K_UP]:
-            self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
-            self.option_cursor += 1
-            self.option_cursor %= len(self.option_buttons)
-        elif key[pygame.K_DOWN]:
-            self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
-            self.option_cursor -= 1
-            self.option_cursor %= len(self.option_buttons)
+
+    def handle_input(self, game: Game, event: pygame.event.Event) -> None:
+        if event.type == pygame.KEYDOWN:
+            text = self.option_texts[self.option_cursor]
+            if event.key == pygame.K_UP:
+                self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
+                self.option_cursor += 1
+                self.option_cursor %= len(self.option_buttons)
+            elif event.key == pygame.K_DOWN:
+                self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
+                self.option_cursor -= 1
+                self.option_cursor %= len(self.option_buttons)
+            elif event.key == pygame.K_SPACE:
+                if self.option_cursor == 0: # Game scene
+                    pass
+                elif self.option_cursor == 1: # Quit game
+                    game.quit = True
 
 
-def handle_input(game: Game) -> None:
+
+def handle_input(game: Game, scene: BaseScene) -> None:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game.quit = True
+        else:
+            scene.handle_input(game, event)
 
 
 def draw_screen(game: Game, scene: BaseScene) -> None:
@@ -142,7 +153,7 @@ def main() -> None:
     scene: BaseScene = MenuScene(DEFAULT_SCREEN_SIZE, font)
 
     while not game.quit:
-        handle_input(game)
+        handle_input(game, scene)
         draw_screen(game, scene)
         update_scene(game, scene)
 
