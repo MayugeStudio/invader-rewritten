@@ -27,8 +27,9 @@ class TransitionalColor:
 
 
 class Game:
-    def __init__(self) -> None:
-        self.screen = pygame.display.set_mode(DEFAULT_SCREEN_SIZE)
+    def __init__(self, screen_size: tuple[int, int]) -> None:
+        self.screen = pygame.display.set_mode(screen_size)
+        self.screen_size = screen_size
         self.fps = 60
         self.clock = pygame.time.Clock()
         self.quit = False
@@ -58,19 +59,26 @@ class MenuScene(BaseScene):
         # TODO factor out buttons into Button-class
         self.button_color = TransitionalColor((100, 245, 30), (1, 0, 0))
 
+        # transparent background
+        self.transparent_surface = pygame.Surface((400, 180))
+        self.transparent_surface.set_alpha(200)
+        self.transparent_surface_rect = self.transparent_surface.get_rect()
+        self.transparent_surface_rect.x = screen_size[0]/2 - self.transparent_surface_rect.w/2
+        self.transparent_surface_rect.y = screen_size[1] - self.transparent_surface_rect.h - 30
+
         self.start_button_text = "START"
         self.start_button = self.font.render(self.start_button_text, False, (255, 255, 255))
 
         self.start_button_rect = self.start_button.get_rect()
         self.start_button_rect.x = screen_size[0]/2 - self.start_button.width/2
-        self.start_button_rect.y = screen_size[1] - self.start_button.height - 150
+        self.start_button_rect.y = self.transparent_surface_rect.y + (self.transparent_surface_rect.h//4) - self.start_button_rect.h//2
 
         self.quit_button_text = "QUIT GAME"
         self.quit_button = self.font.render(self.quit_button_text, False, (255, 255, 255))
 
         self.quit_button_rect = self.quit_button.get_rect()
         self.quit_button_rect.x = screen_size[0]/2 - self.quit_button.width/2
-        self.quit_button_rect.y = screen_size[1] - self.quit_button.height - 80
+        self.quit_button_rect.y = self.transparent_surface_rect.y + (self.transparent_surface_rect.h*3//4) - self.quit_button_rect.h//2
 
         # options
         self.option_cursor = 0
@@ -79,19 +87,13 @@ class MenuScene(BaseScene):
         self.option_rects = [self.start_button_rect, self.quit_button_rect]
         self.options_count = len(self.option_buttons)
 
-        # transparent background
-        self.transparent_surface = pygame.Surface((400, 160))
-        self.transparent_surface.set_alpha(200)
-        self.transparent_surface_rect = self.transparent_surface.get_rect()
-        self.transparent_surface_rect.x = screen_size[0]/2 - self.transparent_surface_rect.width/2
-        self.transparent_surface_rect.y = screen_size[1] - self.transparent_surface_rect.height - 60
 
     def draw(self, game: Game) -> None:
         game.screen.blit(self.backgrounds[math.floor(self.background_index)], (0, 0))
         self.transparent_surface.fill((50, 50, 50))
         game.screen.blit(self.transparent_surface, self.transparent_surface_rect)
         for index in range(self.options_count):
-            game.screen.blit(self.option_buttons[index], self.option_rects[index])
+            game.screen.blit(self.option_buttons[index], (self.option_rects[index].x, self.option_rects[index].y))
 
     def update(self, dt: float) -> None:
         self.background_index += dt * self.background_scroll_speed
@@ -122,7 +124,7 @@ def update_scene(game: Game, scene: BaseScene) -> None:
 
 def main() -> None:
     pygame.init()
-    game = Game()
+    game = Game(DEFAULT_SCREEN_SIZE)
     font = pygame.font.Font(FONTS_PATH + "PixelMplus12-Regular.ttf", 60)
     scene: BaseScene = MenuScene(DEFAULT_SCREEN_SIZE, font)
 
