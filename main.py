@@ -11,11 +11,11 @@ class TransitionalColor:
     def __init__(self, initial_color: tuple[int, int, int], direction: tuple[int, int, int]) -> None:
         self.data = list(initial_color)
         self.direction = list(direction)
-        self.speed = 2
+        self.speed = 4
 
     def transition(self) -> None:
         minimum = 50
-        maximum = 200
+        maximum = 240
         for i in range(3):
             self.data[i] += self.direction[i] * self.speed
             if self.data[i] <= minimum or self.data[i] >= maximum:
