@@ -104,6 +104,16 @@ class MenuScene(BaseScene):
         text = self.option_texts[self.option_cursor]
         self.option_buttons[self.option_cursor] = self.font.render(text, False, self.button_color.data)
 
+        key = pygame.key.get_just_released()
+        if key[pygame.K_UP]:
+            self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
+            self.option_cursor += 1
+            self.option_cursor %= len(self.option_buttons)
+        elif key[pygame.K_DOWN]:
+            self.option_buttons[self.option_cursor] = self.font.render(text, False, (255, 255, 255))
+            self.option_cursor -= 1
+            self.option_cursor %= len(self.option_buttons)
+
 
 def handle_input(game: Game) -> None:
     for event in pygame.event.get():
