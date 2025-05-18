@@ -45,6 +45,9 @@ class BaseScene:
     def update(self, dt: float) -> None:
         pass
 
+    def handle_input(self, game: Game, event: pygame.event.Event) -> None:
+        pass
+
 
 class MenuScene(BaseScene):
     def __init__(self, screen_size: tuple[int, int], font: pygame.Font) -> None:
@@ -63,21 +66,21 @@ class MenuScene(BaseScene):
         self.transparent_surface = pygame.Surface((400, 180))
         self.transparent_surface.set_alpha(200)
         self.transparent_surface_rect = self.transparent_surface.get_rect()
-        self.transparent_surface_rect.x = screen_size[0]/2 - self.transparent_surface_rect.w/2
+        self.transparent_surface_rect.x = screen_size[0]//2 - self.transparent_surface_rect.w//2
         self.transparent_surface_rect.y = screen_size[1] - self.transparent_surface_rect.h - 30
 
         self.start_button_text = "START"
         self.start_button = self.font.render(self.start_button_text, False, (255, 255, 255))
 
         self.start_button_rect = self.start_button.get_rect()
-        self.start_button_rect.x = screen_size[0]/2 - self.start_button.width/2
+        self.start_button_rect.x = screen_size[0]//2 - self.start_button.width//2
         self.start_button_rect.y = self.transparent_surface_rect.y + (self.transparent_surface_rect.h//4) - self.start_button_rect.h//2
 
         self.quit_button_text = "QUIT GAME"
         self.quit_button = self.font.render(self.quit_button_text, False, (255, 255, 255))
 
         self.quit_button_rect = self.quit_button.get_rect()
-        self.quit_button_rect.x = screen_size[0]/2 - self.quit_button.width/2
+        self.quit_button_rect.x = screen_size[0]//2 - self.quit_button.width//2
         self.quit_button_rect.y = self.transparent_surface_rect.y + (self.transparent_surface_rect.h*3//4) - self.quit_button_rect.h//2
 
         # options
@@ -89,14 +92,14 @@ class MenuScene(BaseScene):
 
 
     def draw(self, game: Game) -> None:
-        game.screen.blit(self.backgrounds[math.floor(self.background_index)], (0, 0))
+        game.screen.blit(self.backgrounds[self.background_index], (0, 0))
         self.transparent_surface.fill((50, 50, 50))
         game.screen.blit(self.transparent_surface, self.transparent_surface_rect)
         for index in range(self.options_count):
             game.screen.blit(self.option_buttons[index], (self.option_rects[index].x, self.option_rects[index].y))
 
     def update(self, dt: float) -> None:
-        self.background_index += dt * self.background_scroll_speed
+        self.background_index += math.floor(dt * self.background_scroll_speed)
         if self.background_index > len(self.backgrounds):
             self.background_index = 0
 
