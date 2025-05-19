@@ -55,7 +55,7 @@ class MenuScene(BaseScene):
         self.backgrounds = [pygame.image.load(IMAGES_PATH + f"background/background_1_{i+1}.png") for i in range(12)]
         for i in range(len(self.backgrounds)):
             self.backgrounds[i] = pygame.transform.scale(self.backgrounds[i], screen_size)
-        self.background_index = 0
+        self.background_index = 0.0
         self.background_scroll_speed = 8
 
         # TODO delete masic numbers such as 150, 80
@@ -92,14 +92,14 @@ class MenuScene(BaseScene):
 
 
     def draw(self, game: Game) -> None:
-        game.screen.blit(self.backgrounds[self.background_index], (0, 0))
+        game.screen.blit(self.backgrounds[math.floor(self.background_index)], (0, 0))
         self.transparent_surface.fill((50, 50, 50))
         game.screen.blit(self.transparent_surface, self.transparent_surface_rect)
         for index in range(self.options_count):
             game.screen.blit(self.option_buttons[index], (self.option_rects[index].x, self.option_rects[index].y))
 
     def update(self, dt: float) -> None:
-        self.background_index += math.floor(dt * self.background_scroll_speed)
+        self.background_index += dt * self.background_scroll_speed
         if self.background_index > len(self.backgrounds):
             self.background_index = 0
 
